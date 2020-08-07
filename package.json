@@ -1,0 +1,12 @@
+{
+  "name": "oqo",
+  "version": "0.0.1",
+  "description": "JavaScript Object Query Object",
+  "main": "index.js",
+  "author": "rulyox",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rulyox/oqo"
+  }
+}
