@@ -1,1 +1,7 @@
 /.idea
+/node_modules
+
+/lib
+tsconfig.json
+
+test.js
