@@ -1,6 +1,6 @@
 {
   "name": "oqo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "JavaScript Object Query Object",
   "main": "dist/index.js",
   "author": "rulyox",
