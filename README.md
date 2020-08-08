@@ -43,3 +43,20 @@ console.log(result);
     { name: 'Charlie',  gender: 'female' }
 ]
 ```
+
+## Details
+
+### select
+`select` is always needed. An array of keys should be passed.
+
+### from
+`from` is always needed. A single object or an array of objects is needed. The objects should have the keys listed in `select`.
+
+### where
+`where` can be used to give a condition. The condition should look like `key operator operand`(2 spaces are necessary). Currently, 5 operators (`>`, `>=`, `=`, `<`, `<=`) are supported.
+
+### order
+`order` can be used to order the result objects by a key. `asc` or `desc` should be passed as a second value.
+
+### run
+`run` is used to finish the query and get the results.
