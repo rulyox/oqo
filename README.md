@@ -26,7 +26,7 @@ const people = [
 ];
 
 const result = OQO
-    .select(['name', 'gender'])
+    .select('name', 'gender')
     .from(people)
     .where('age >= 20')
     .order('age', 'desc')
