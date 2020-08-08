@@ -1,14 +1,19 @@
 {
   "name": "oqo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "JavaScript Object Query Object",
-  "main": "dist/index.js",
-  "author": "rulyox",
+  "keywords": ["oqo", "query"],
+  "author": {
+    "name": "rulyox",
+    "email": "email@rulyox.com",
+    "url": "https://rulyox.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/rulyox/oqo"
   },
+  "main": "dist/index.js",
   "devDependencies": {
     "typescript": "^3.9.7"
   }
