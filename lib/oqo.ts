@@ -1,157 +1,145 @@
 export class OQO {
+	private selectList: string[];
+	private objectList: any[];
 
-    private selectList: string[];
-    private objectList: any[];
+	constructor() {
+		this.selectList = [];
+		this.objectList = [];
+	}
 
-    constructor() {
-        this.selectList = [];
-        this.objectList = [];
-    }
+	select(selectList: string): OQO {
+		this.selectList = selectList.split(" ");
 
-    select(selectList: string[]): OQO {
+		return this;
+	}
 
-        this.selectList = selectList;
+	from(object: any): OQO {
+		if (Array.isArray(object)) {
+			// check if object array
+			object.forEach((item) => {
+				if (typeof item !== 'object')
+					throw new Error('FROM clause needs an object or an array of objects!');
+			});
 
-        return this;
+			this.objectList = object;
+		} else {
+			// check if single object
+			if (typeof object === 'object') this.objectList = [object];
+			else throw new Error('FROM clause needs an object or an array of objects!');
+		}
 
-    }
+		return this;
+	}
 
-    from(object: any): OQO {
+	where(condition: string): OQO {
+		// parse condition
+		const splitCondition = condition.split(' ');
 
-        if(Array.isArray(object)) {
+		if (splitCondition.length !== 3) throw new Error('WHERE clause needs to have two spaces!');
 
-            // check if object array
-            object.forEach((item) => {
+		const key = splitCondition[0];
+		const operator = splitCondition[1];
+		const operand = splitCondition[2];
 
-                if(typeof item !== 'object') throw new Error('FROM clause needs an object or an array of objects!');
+		if (
+			operator !== '>' &&
+			operator !== '>=' &&
+			operator !== '=' &&
+			operator !== '<' &&
+			operator !== '<='
+		)
+			throw new Error('WHERE clause needs to have the correct operator!');
 
-            });
+		// create conditional statement
+		let statement: any;
 
-            this.objectList = object;
+		switch (operator) {
+			case '>':
+				statement = (item: any): boolean =>
+					isNaN(Number(item[`${key}`]))
+						? item[`${key}`] > operand
+						: item[`${key}`] > Number(operand);
 
-        } else {
+				break;
 
-            // check if single object
-            if(typeof object === 'object') this.objectList = [object];
-            else throw new Error('FROM clause needs an object or an array of objects!');
+			case '>=':
+				statement = (item: any): boolean =>
+					isNaN(Number(item[`${key}`]))
+						? item[`${key}`] >= operand
+						: item[`${key}`] >= Number(operand);
 
-        }
+				break;
 
-        return this;
+			case '=':
+				statement = (item: any) =>
+					isNaN(Number(item[`${key}`]))
+						? item[`${key}`] === operand
+						: item[`${key}`] === Number(operand);
 
-    }
+				break;
 
-    where(condition: string): OQO {
+			case '<':
+				statement = (item: any) =>
+					isNaN(Number(item[`${key}`]))
+						? item[`${key}`] < operand
+						: item[`${key}`] < Number(operand);
 
-        // parse condition
-        const splitCondition = condition.split(' ');
+				break;
 
-        if(splitCondition.length !== 3) throw new Error('WHERE clause needs to have two spaces!');
+			case '<=':
+				statement = (item: any) =>
+					isNaN(Number(item[`${key}`]))
+						? item[`${key}`] <= operand
+						: item[`${key}`] <= Number(operand);
 
-        const key = splitCondition[0];
-        const operator = splitCondition[1];
-        const operand = splitCondition[2];
+				break;
+		}
 
-        if(operator !== '>' && operator !== '>=' && operator !== '=' && operator !== '<' && operator !== '<=') throw new Error('WHERE clause needs to have the correct operator!');
+		// filter objects
+		const objectList: any[] = [];
 
-        // create conditional statement
-        let statement: any;
+		this.objectList.forEach((item) => {
+			if (statement(item)) objectList.push(item);
+		});
 
-        switch(operator) {
-            case '>':
-                statement = (item: any): boolean => isNaN(Number(item[`${key}`])) ?
-                    item[`${key}`] > operand :
-                    item[`${key}`] > Number(operand);
+		this.objectList = objectList;
 
-                break;
+		return this;
+	}
 
-            case '>=':
-                statement = (item: any): boolean => isNaN(Number(item[`${key}`])) ?
-                    item[`${key}`] >= operand :
-                    item[`${key}`] >= Number(operand);
+	order(key: string, type: string): OQO {
+		if (type !== 'asc' && type !== 'desc')
+			throw new Error('ORDER clause needs to have the correct type!');
 
-                break;
+		const flip = type === 'asc' ? 1 : -1;
+		const compare = (a: any, b: any): number => {
+			if (a[`${key}`] < b[`${key}`]) return -1 * flip;
+			else if (a[`${key}`] > b[`${key}`]) return flip;
+			else return 0;
+		};
 
-            case '=':
-                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
-                    item[`${key}`] === operand :
-                    item[`${key}`] === Number(operand);
+		this.objectList = this.objectList.sort(compare);
 
-                break;
+		return this;
+	}
 
-            case '<':
-                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
-                    item[`${key}`] < operand :
-                    item[`${key}`] < Number(operand);
+	run(): any[] {
+		const objectList: any[] = [];
 
-                break;
+		// for all objects
+		this.objectList.forEach((item) => {
+			const object: any = {};
 
-            case '<=':
-                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
-                    item[`${key}`] <= operand :
-                    item[`${key}`] <= Number(operand);
+			// filter selected keys
+			this.selectList.forEach((key) => {
+				object[`${key}`] = item[`${key}`];
+			});
 
-                break;
-        }
+			objectList.push(object);
+		});
 
-        // filter objects
-        const objectList: any[] = [];
+		this.objectList = objectList;
 
-        this.objectList.forEach((item) => {
-
-            if(statement(item)) objectList.push(item);
-
-        });
-
-        this.objectList = objectList;
-
-        return this;
-
-    }
-
-    order(key: string, type: string): OQO {
-
-        if(type !== 'asc' && type !== 'desc') throw new Error('ORDER clause needs to have the correct type!');
-
-        const flip = type === 'asc' ? 1 : -1;
-        const compare = (a: any, b: any): number => {
-
-            if(a[`${key}`] < b[`${key}`]) return -1 * flip;
-            else if(a[`${key}`] > b[`${key}`]) return flip;
-            else return 0;
-
-        };
-
-        this.objectList = this.objectList.sort(compare);
-
-        return this;
-
-    }
-
-    run(): any[] {
-
-        const objectList: any[] = [];
-
-        // for all objects
-        this.objectList.forEach((item) => {
-
-            const object: any = {};
-
-            // filter selected keys
-            this.selectList.forEach((key) => {
-
-                object[`${key}`] = item[`${key}`];
-
-            });
-
-            objectList.push(object);
-
-        });
-
-        this.objectList = objectList;
-
-        return this.objectList;
-
-    }
-
+		return this.objectList;
+	}
 }
