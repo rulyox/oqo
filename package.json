@@ -8,6 +8,9 @@
     "email": "email@rulyox.com",
     "url": "https://rulyox.com"
   },
+	"scripts": {
+    "build": "tsc"
+  },
 	"main": "dist/index.js",
   "types" : "dist/index.d.ts",
   "license": "MIT",

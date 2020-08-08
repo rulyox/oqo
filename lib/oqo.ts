@@ -32,15 +32,46 @@ export class OQO {
 	}
 
 	where(condition: string): OQO {
+		let condition_type: any;
 		// parse condition
 		const splitCondition = condition.split(' ');
-
 		if (splitCondition.length !== 3) throw new Error('WHERE clause needs to have two spaces!');
 
 		const key = splitCondition[0];
 		const operator = splitCondition[1];
-		const operand = splitCondition[2];
+		let operand: any = splitCondition[2];
 
+		this.objectList.forEach((item) => {
+			// Obj List 안에 condition에 해당하는 키(필드) 값이 있는 확인
+			if (item.hasOwnProperty(key)) {
+				// 해당 값의 타입 기록
+				if (typeof item[key] === "object") {
+					if (Array.isArray(item[key])) {
+						condition_type = "array";
+					} else {
+						condition_type = "object"
+					}
+				} else {
+					condition_type = typeof item[key];
+				}
+			}
+		});
+		
+		switch (condition_type) {
+			case 'number':
+				operand = Number(operand);
+				break
+			case 'string':
+				operand = operand;
+				break
+			case 'array':
+				operand = operand.split(",");
+				break
+			case 'object':
+				operand = operand;
+				break
+		}
+		
 		if (
 			operator !== '>' &&
 			operator !== '>=' &&
@@ -72,9 +103,7 @@ export class OQO {
 
 			case '=':
 				statement = (item: any) =>
-					isNaN(Number(item[`${key}`]))
-						? item[`${key}`] === operand
-						: item[`${key}`] === Number(operand);
+					condition_type == "array" ? JSON.stringify(item[`${key}`]) === JSON.stringify(operand) : item[`${key}`] == operand;
 
 				break;
 
