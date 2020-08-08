@@ -8,7 +8,12 @@
     "email": "email@rulyox.com",
     "url": "https://rulyox.com"
   },
+	"main": "dist/index.js",
+  "types" : "dist/index.d.ts",
   "license": "MIT",
+	"scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rulyox/oqo"
