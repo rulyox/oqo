@@ -109,6 +109,25 @@ export class OQO {
 
     }
 
+    order(key: string, type: string): OQO {
+
+        if(type !== 'asc' && type !== 'desc') throw new Error('ORDER clause needs to have the correct type!');
+
+        const flip = type === 'asc' ? 1 : -1;
+        const compare = (a: any, b: any): number => {
+
+            if(a[`${key}`] < b[`${key}`]) return -1 * flip;
+            else if(a[`${key}`] > b[`${key}`]) return flip;
+            else return 0;
+
+        };
+
+        this.objectList = this.objectList.sort(compare);
+
+        return this;
+
+    }
+
     run(): any[] {
 
         const objectList: any[] = [];
