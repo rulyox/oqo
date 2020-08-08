@@ -8,7 +8,7 @@ export class OQO {
         this.objectList = [];
     }
 
-    select(selectList: string[]) {
+    select(selectList: string[]): OQO {
 
         this.selectList = selectList;
 
@@ -16,7 +16,7 @@ export class OQO {
 
     }
 
-    from(object: any) {
+    from(object: any): OQO {
 
         if(Array.isArray(object)) {
 
@@ -41,14 +41,14 @@ export class OQO {
 
     }
 
-    where(condition: string) {
+    where(condition: string): OQO {
 
         // parse condition
         const splitCondition = condition.split(' ');
 
         if(splitCondition.length !== 3) throw new Error('WHERE clause needs to have two spaces!');
 
-        const column = splitCondition[0];
+        const key = splitCondition[0];
         const operator = splitCondition[1];
         const operand = splitCondition[2];
 
@@ -59,37 +59,37 @@ export class OQO {
 
         switch(operator) {
             case '>':
-                statement = (item: any): boolean => isNaN(Number(item[`${column}`])) ?
-                    item[`${column}`] > operand :
-                    item[`${column}`] > Number(operand);
+                statement = (item: any): boolean => isNaN(Number(item[`${key}`])) ?
+                    item[`${key}`] > operand :
+                    item[`${key}`] > Number(operand);
 
                 break;
 
             case '>=':
-                statement = (item: any): boolean => isNaN(Number(item[`${column}`])) ?
-                    item[`${column}`] >= operand :
-                    item[`${column}`] >= Number(operand);
+                statement = (item: any): boolean => isNaN(Number(item[`${key}`])) ?
+                    item[`${key}`] >= operand :
+                    item[`${key}`] >= Number(operand);
 
                 break;
 
             case '=':
-                statement = (item: any) => isNaN(Number(item[`${column}`])) ?
-                    item[`${column}`] === operand :
-                    item[`${column}`] === Number(operand);
+                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
+                    item[`${key}`] === operand :
+                    item[`${key}`] === Number(operand);
 
                 break;
 
             case '<':
-                statement = (item: any) => isNaN(Number(item[`${column}`])) ?
-                    item[`${column}`] < operand :
-                    item[`${column}`] < Number(operand);
+                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
+                    item[`${key}`] < operand :
+                    item[`${key}`] < Number(operand);
 
                 break;
 
             case '<=':
-                statement = (item: any) => isNaN(Number(item[`${column}`])) ?
-                    item[`${column}`] <= operand :
-                    item[`${column}`] <= Number(operand);
+                statement = (item: any) => isNaN(Number(item[`${key}`])) ?
+                    item[`${key}`] <= operand :
+                    item[`${key}`] <= Number(operand);
 
                 break;
         }
@@ -109,7 +109,7 @@ export class OQO {
 
     }
 
-    run() {
+    run(): any[] {
 
         const objectList: any[] = [];
 
@@ -118,10 +118,10 @@ export class OQO {
 
             const object: any = {};
 
-            // filter selected columns
-            this.selectList.forEach((column) => {
+            // filter selected keys
+            this.selectList.forEach((key) => {
 
-                object[`${column}`] = item[`${column}`];
+                object[`${key}`] = item[`${key}`];
 
             });
 
