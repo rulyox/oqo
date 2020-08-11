@@ -17,6 +17,10 @@
     "url": "https://github.com/rulyox/oqo"
   },
   "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint lib/** || exit 0",
+    "fix": "eslint --fix lib/**"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
