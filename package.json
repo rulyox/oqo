@@ -2,7 +2,10 @@
   "name": "oqo",
   "version": "1.0.1",
   "description": "JavaScript Object Query Object",
-  "keywords": ["oqo", "query"],
+  "keywords": [
+    "oqo",
+    "query"
+  ],
   "author": {
     "name": "rulyox",
     "email": "email@rulyox.com",
@@ -15,6 +18,12 @@
   },
   "main": "dist/index.js",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
     "typescript": "^3.9.7"
   }
 }

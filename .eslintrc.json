@@ -1,0 +1,17 @@
+{
+    "env": {
+        "node": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "extends": [
+        "plugin:prettier/recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "plugins": [
+        "prettier",
+        "@typescript-eslint"
+    ]
+}

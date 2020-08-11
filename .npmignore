@@ -3,5 +3,7 @@
 
 /lib
 tsconfig.json
+.eslintrc.json
+.prettierrc.json
 
 test.js
