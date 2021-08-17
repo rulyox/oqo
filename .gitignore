@@ -5,3 +5,4 @@
 
 *.manifest
 yarn.lock
+package-lock.json

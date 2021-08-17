@@ -1,24 +1,28 @@
 {
-  "name": "oqo",
-  "version": "1.0.2",
-  "description": "JavaScript Object Query Object",
-  "keywords": ["oqo", "query"],
-  "author": {
-    "name": "rulyox",
-    "email": "email@rulyox.com",
-    "url": "https://rulyox.com"
-  },
+	"name": "oqo",
+	"version": "1.1.1",
+	"description": "JavaScript Object Query Object",
+	"keywords": [
+		"oqo",
+		"query"
+	],
+	"author": {
+		"name": "rulyox",
+		"email": "email@rulyox.com",
+		"url": "https://rulyox.com"
+	},
 	"scripts": {
-    "build": "tsc"
-  },
+		"build": "tsc",
+		"test": "node test.js"
+	},
 	"main": "dist/index.js",
-  "types" : "dist/index.d.ts",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rulyox/oqo"
-  },
-  "devDependencies": {
-    "typescript": "^3.9.7"
-  }
+	"types": "dist/index.d.ts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rulyox/oqo"
+	},
+	"devDependencies": {
+		"typescript": "^3.9.7"
+	}
 }

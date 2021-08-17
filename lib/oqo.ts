@@ -1,28 +1,51 @@
 export class OQO {
 	private selectList: string[];
+	private isSelectAll: boolean;
+	private AllOfObjectKeys: string[];
 	private objectList: any[];
 
 	constructor() {
 		this.selectList = [];
 		this.objectList = [];
+		this.AllOfObjectKeys = [];
+		this.isSelectAll = false;
 	}
 
-	select(selectList: string): OQO {
-		this.selectList = selectList.split(" ");
-
+	select(selectList: string | string[]): OQO {
+		if (Array.isArray(selectList)) {
+			this.selectList = selectList;
+		} else {
+			if (selectList !== '*') {
+				this.selectList = selectList.replace(/ /gi, '').split(',');
+			} else {
+				this.isSelectAll = true;
+			}
+		}
 		return this;
 	}
 
 	from(object: any): OQO {
 		if (Array.isArray(object)) {
+			if (this.isSelectAll) {
+				if (object.length > 0) {
+					this.selectList = Object.keys(object[0]);
+				} else {
+					// error test
+					throw new Error('FROM clause needs an object or an array of objects!');
+				}
+			}
+			this.AllOfObjectKeys = Object.keys(object[0]);
 			// check if object array
 			object.forEach((item) => {
-				if (typeof item !== 'object')
-					throw new Error('FROM clause needs an object or an array of objects!');
+				if (typeof item !== 'object') throw new Error('FROM clause needs an object or an array of objects!');
 			});
 
 			this.objectList = object;
 		} else {
+			if (this.isSelectAll) {
+				this.selectList = Object.keys(object[0]);
+				this.AllOfObjectKeys = Object.keys(object[0]);
+			}
 			// check if single object
 			if (typeof object === 'object') this.objectList = [object];
 			else throw new Error('FROM clause needs an object or an array of objects!');
@@ -34,51 +57,75 @@ export class OQO {
 	where(condition: string): OQO {
 		let condition_type: any;
 		// parse condition
-		const splitCondition = condition.split(' ');
-		if (splitCondition.length !== 3) throw new Error('WHERE clause needs to have two spaces!');
+		let condition_control: string = '';
+		if (condition.search('>') !== -1) {
+			if (condition.search('>=') !== -1) {
+				condition_control = '>=';
+			} else {
+				condition_control = '>';
+			}
+		} else if (condition.search('<') !== -1) {
+			if (condition.search('<=') !== -1) {
+				condition_control = '<=';
+			} else {
+				condition_control = '<';
+			}
+		} else if (condition.search('=') !== -1) {
+			condition_control = '=';
+		}
+		const splitCondition = condition.replace(/ /gi, '').split(condition_control);
+
+		let isValided = false;
+		for (let idx = 0; idx < this.AllOfObjectKeys.length; idx++) {
+			if (this.AllOfObjectKeys[idx] === splitCondition[0]) {
+				isValided = true;
+			}
+		}
+		if (!isValided) {
+			throw new Error('In the WHERE clause, there should be a field on the left and a value on the right.');
+		}
+		if (splitCondition.length < 2) {
+			throw new Error('Insufficient number of argument values in WHERE clause.');
+		} else if (2 < splitCondition.length) {
+			throw new Error('Over number of argument values in WHERE clause.');
+		}
 
 		const key = splitCondition[0];
-		const operator = splitCondition[1];
-		let operand: any = splitCondition[2];
+		const operator = condition_control;
+		let operand: any = splitCondition[1];
 
 		this.objectList.forEach((item) => {
 			// Obj List 안에 condition에 해당하는 키(필드) 값이 있는 확인
 			if (item.hasOwnProperty(key)) {
 				// 해당 값의 타입 기록
-				if (typeof item[key] === "object") {
+				if (typeof item[key] === 'object') {
 					if (Array.isArray(item[key])) {
-						condition_type = "array";
+						condition_type = 'array';
 					} else {
-						condition_type = "object"
+						condition_type = 'object';
 					}
 				} else {
 					condition_type = typeof item[key];
 				}
 			}
 		});
-		
+
 		switch (condition_type) {
 			case 'number':
 				operand = Number(operand);
-				break
+				break;
 			case 'string':
 				operand = operand;
-				break
+				break;
 			case 'array':
-				operand = operand.split(",");
-				break
+				operand = operand.split(',');
+				break;
 			case 'object':
 				operand = operand;
-				break
+				break;
 		}
-		
-		if (
-			operator !== '>' &&
-			operator !== '>=' &&
-			operator !== '=' &&
-			operator !== '<' &&
-			operator !== '<='
-		)
+
+		if (operator !== '>' && operator !== '>=' && operator !== '=' && operator !== '<' && operator !== '<=')
 			throw new Error('WHERE clause needs to have the correct operator!');
 
 		// create conditional statement
@@ -87,39 +134,33 @@ export class OQO {
 		switch (operator) {
 			case '>':
 				statement = (item: any): boolean =>
-					isNaN(Number(item[`${key}`]))
-						? item[`${key}`] > operand
-						: item[`${key}`] > Number(operand);
+					isNaN(Number(item[`${key}`])) ? item[`${key}`] > operand : item[`${key}`] > Number(operand);
 
 				break;
 
 			case '>=':
 				statement = (item: any): boolean =>
-					isNaN(Number(item[`${key}`]))
-						? item[`${key}`] >= operand
-						: item[`${key}`] >= Number(operand);
+					isNaN(Number(item[`${key}`])) ? item[`${key}`] >= operand : item[`${key}`] >= Number(operand);
 
 				break;
 
 			case '=':
 				statement = (item: any) =>
-					condition_type == "array" ? JSON.stringify(item[`${key}`]) === JSON.stringify(operand) : item[`${key}`] == operand;
+					condition_type == 'array'
+						? JSON.stringify(item[`${key}`]) === JSON.stringify(operand)
+						: item[`${key}`] == operand;
 
 				break;
 
 			case '<':
 				statement = (item: any) =>
-					isNaN(Number(item[`${key}`]))
-						? item[`${key}`] < operand
-						: item[`${key}`] < Number(operand);
+					isNaN(Number(item[`${key}`])) ? item[`${key}`] < operand : item[`${key}`] < Number(operand);
 
 				break;
 
 			case '<=':
 				statement = (item: any) =>
-					isNaN(Number(item[`${key}`]))
-						? item[`${key}`] <= operand
-						: item[`${key}`] <= Number(operand);
+					isNaN(Number(item[`${key}`])) ? item[`${key}`] <= operand : item[`${key}`] <= Number(operand);
 
 				break;
 		}
@@ -137,8 +178,7 @@ export class OQO {
 	}
 
 	order(key: string, type: string): OQO {
-		if (type !== 'asc' && type !== 'desc')
-			throw new Error('ORDER clause needs to have the correct type!');
+		if (type !== 'asc' && type !== 'desc') throw new Error('ORDER clause needs to have the correct type!');
 
 		const flip = type === 'asc' ? 1 : -1;
 		const compare = (a: any, b: any): number => {
