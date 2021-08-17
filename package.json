@@ -1,6 +1,7 @@
 {
-	"name": "oqo",
-	"version": "1.1.1",
+	"name": "@mineru98/oqo",
+	"version": "1.1.2",
+	"private": false,
 	"description": "JavaScript Object Query Object",
 	"keywords": [
 		"oqo",
