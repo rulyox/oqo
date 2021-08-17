@@ -1,3 +1,3 @@
-import { OQO } from './oqo';
+import { OQO } from "./oqo";
 
 export = new OQO();
