@@ -15,10 +15,10 @@ if (Array.isArray(test_case_1)) {
 		if ('name, gender' === Object.keys(test_case_1[0]).join(', ')) {
 			console.info('Test Case #1 Sucess!!!');
 		} else {
-			console.error('Test Case #1 fail.');
+			console.error('Test Case #1 Fail.');
 		}
 	} else {
-		console.error('Test Case #1 fail.');
+		console.error('Test Case #1 Fail.');
 	}
 }
 
@@ -29,10 +29,10 @@ if (Array.isArray(test_case_2)) {
 		if (Object.keys(test_data[0]).join(',') === Object.keys(test_case_2[0]).join(',')) {
 			console.info('Test Case #2 Sucess!!!');
 		} else {
-			console.error('Test Case #2 fail.');
+			console.error('Test Case #2 Fail.');
 		}
 	} else {
-		console.error('Test Case #2 fail.');
+		console.error('Test Case #2 Fail.');
 	}
 }
 
@@ -43,9 +43,23 @@ if (Array.isArray(test_case_3)) {
 		if (Object.keys(test_data[0]).join(',') === Object.keys(test_case_3[0]).join(',')) {
 			console.info('Test Case #3 Sucess!!!');
 		} else {
-			console.error('Test Case #3 fail.');
+			console.error('Test Case #3 Fail.');
 		}
 	} else {
-		console.error('Test Case #3 fail.');
+		console.error('Test Case #3 Fail.');
 	}
+}
+
+try {
+	OQO.select('*').from(test_data).where('20 <= age').order('age', 'desc').run();
+	console.error('Test Case #4 Fail.');
+} catch (error) {
+	console.info('Test Case #4 Sucess!!!');
+}
+
+try {
+	OQO.select('*').from(test_data).where('20 age').order('age', 'desc').run();
+	console.error('Test Case #5 Fail.');
+} catch (error) {
+	console.info('Test Case #5 Sucess!!!');
 }
