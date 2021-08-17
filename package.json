@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"test": "node test.js"
+		"test": "tsc && node test.js"
 	},
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -23,6 +23,6 @@
 		"url": "https://github.com/rulyox/oqo"
 	},
 	"devDependencies": {
-		"typescript": "^3.9.7"
+		"typescript": "^4.3.5"
 	}
 }
